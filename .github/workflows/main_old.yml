@@ -3,6 +3,8 @@ name: OLD_CI
 on:
   workflow_dispatch:
 
+# Touching this file can be used to trigger the main CI workflow without changing build behavior.
+
 
 env:
   forbuildVariables: use Installer\buildVariables.cmd file
@@ -200,4 +202,3 @@ jobs:
           path: |
             Installer/SbiePlus_x86/*
           retention-days: 60
-
