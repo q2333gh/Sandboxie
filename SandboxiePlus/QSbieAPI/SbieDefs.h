@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../SandMan/nosupport.h"
+
 #define SANDBOXIE		L"Sandboxie"
 
 #define REQUEST_LEN     4096

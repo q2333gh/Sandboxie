@@ -1,5 +1,7 @@
 #pragma once
 
+#include "nosupport.h"
+
 #include <QtWidgets/QMainWindow>
 
 #include "../MiscHelpers/Common/Settings.h"

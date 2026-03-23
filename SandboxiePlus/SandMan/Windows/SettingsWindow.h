@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../nosupport.h"
+
 #include <QtWidgets/QMainWindow>
 #include <QMap>
 #include "ui_SettingsWindow.h"
@@ -250,4 +252,4 @@ extern QByteArray g_Certificate;
 extern SCertInfo g_CertInfo;
 
 #define EVAL_MAX 3		// for UI only actual limits enforced on server
-#define EVAL_DAYS 10	
+#define EVAL_DAYS 10

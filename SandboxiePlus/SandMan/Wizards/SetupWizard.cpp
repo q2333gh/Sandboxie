@@ -197,6 +197,9 @@ CIntroPage::CIntroPage(QWidget *parent)
     layout->addWidget(pNote);
 
     uchar BusinessUse = 2;
+#ifdef NOSUPPORT_PATCH
+    BusinessUse = 0;
+#else
     if (!g_Certificate.isEmpty())
         BusinessUse = CERT_IS_TYPE(g_CertInfo, eCertBusiness) ? 1 : 0;
     else {
@@ -204,6 +207,7 @@ CIntroPage::CIntroPage(QWidget *parent)
         if (theAPI->GetSecureParam("UsageFlags", &UsageFlags, sizeof(UsageFlags)))
             BusinessUse = (UsageFlags & 1) != 0 ? 1 : 0;
     }
+#endif
     if (BusinessUse != 2) {
         m_pPersonal->setChecked(BusinessUse == 0);
         m_pBusiness->setChecked(BusinessUse == 1);
@@ -226,8 +230,10 @@ CIntroPage::CIntroPage(QWidget *parent)
 
 int CIntroPage::nextId() const
 {
+#ifndef NOSUPPORT_PATCH
     if(g_Certificate.isEmpty())
         return CSetupWizard::Page_Certificate;
+#endif
     return CSetupWizard::Page_UI;
 }
 
@@ -302,7 +308,11 @@ CCertificatePage::CCertificatePage(int iOldLevel, QWidget *parent)
 
 void CCertificatePage::initializePage()
 {
+#ifdef NOSUPPORT_PATCH
+    m_pCertificate->setPlainText("Support certificate checks are disabled in this build.");
+#else
     m_pCertificate->setPlainText(g_Certificate);
+#endif
 
     uchar UsageFlags = 0;
     theAPI->GetSecureParam("UsageFlags", &UsageFlags, sizeof(UsageFlags));
@@ -373,6 +383,9 @@ void CCertificatePage::OnCertData(const QByteArray& Certificate, const QVariantM
 
 bool CCertificatePage::validatePage()
 {
+#ifdef NOSUPPORT_PATCH
+    return true;
+#endif
     if (m_pEvaluate->isChecked())
         return true;
 

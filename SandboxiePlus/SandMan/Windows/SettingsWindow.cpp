@@ -3192,6 +3192,23 @@ void CSettingsWindow::LoadCertificate(QString CertPath)
 void CSettingsWindow::UpdateCert()
 {
 	ui.lblCertExp->setVisible(false);
+#ifdef NOSUPPORT_PATCH
+	ui.lblEvalCert->setVisible(false);
+	ui.txtCertificate->setProperty("hidden", false);
+	ui.txtCertificate->setPlainText(tr("Support certificate checks are disabled in this build."));
+
+	QPalette palette = QApplication::palette();
+	if (theGUI->m_DarkTheme)
+		palette.setColor(QPalette::Text, Qt::black);
+	palette.setColor(QPalette::Base, QColor(192, 255, 192));
+	ui.txtCertificate->setPalette(palette);
+
+	ui.lblCert->setText(tr("Certificate status: enabled by NOSUPPORT_PATCH"));
+	ui.lblCertOpt->setText(tr("Options: SBox, EBox, NetI, Desk"));
+	ui.lblCertOpt->setToolTip(tr("Security/Privacy Enhanced & App Boxes (SBox): Enabled\nEncrypted Sandboxes (EBox): Enabled\nNetwork Interception (NetI): Enabled\nSandboxie Desktop (Desk): Enabled"));
+	ui.radInsider->setEnabled(CERT_IS_INSIDER(g_CertInfo));
+	return;
+#endif
 	ui.lblEvalCert->setVisible(g_Certificate.isEmpty());
 
 	//ui.lblCertLevel->setVisible(!g_Certificate.isEmpty());

@@ -1416,7 +1416,13 @@ void CSandMan::UpdateLabel()
 		//auto neon = new CNeonEffect(10, 4, 180); // 140
 		//m_pLabel->setGraphicsEffect(NULL);
 	}
-	else if (g_Certificate.isEmpty())
+	else if (
+#ifdef NOSUPPORT_PATCH
+		false
+#else
+		g_Certificate.isEmpty()
+#endif
+	)
 	{
 		LabelText = theConf->GetString("Updater/LabelMessage");
 		if(LabelText.isEmpty())
@@ -3489,6 +3495,22 @@ SB_STATUS CSandMan::ReloadCert(QWidget* pWidget)
 
 	theAPI->GetDriverInfo(-1, &g_CertInfo.State, sizeof(g_CertInfo.State));
 
+#ifdef NOSUPPORT_PATCH
+	g_CertInfo.active = 1;
+	g_CertInfo.expired = 0;
+	g_CertInfo.outdated = 0;
+	g_CertInfo.grace_period = 0;
+	g_CertInfo.locked = 1;
+	g_CertInfo.lock_req = 0;
+	g_CertInfo.type = eCertPersonal;
+	g_CertInfo.level = eCertMaxLevel;
+	g_CertInfo.opt_sec = 1;
+	g_CertInfo.opt_enc = 1;
+	g_CertInfo.opt_net = 1;
+	g_CertInfo.opt_desk = 1;
+	g_CertInfo.expirers_in_sec = 0;
+#endif
+
 	if (!Status.IsError())
 	{
 		BYTE CertBlocked = 0;
@@ -4822,10 +4844,14 @@ void CSandMan::OnAbout()
 		).arg(theGUI->GetVersion(true));
 
 		QString CertInfo;
+#ifdef NOSUPPORT_PATCH
+		CertInfo = tr("This copy of Sandboxie-Plus is certified for: Anyone!!!");
+#else
 		if (!g_Certificate.isEmpty())
 			CertInfo = tr("This copy of Sandboxie-Plus is certified for: %1").arg(GetArguments(g_Certificate, L'\n', L':').value("NAME"));
 		else
 			CertInfo = tr("Sandboxie-Plus is free for personal and non-commercial use.");
+#endif
 
 		QString SbiePath = theAPI->GetSbiePath();
 

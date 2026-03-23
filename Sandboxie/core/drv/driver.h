@@ -24,6 +24,8 @@
 #ifndef _MY_DRIVER_H
 #define _MY_DRIVER_H
 
+#include "nosupport.h"
+
 
 #pragma optimize("y", off)
 // HACK ALERT we must fix this 32 vs. 64 bit handle problem.
