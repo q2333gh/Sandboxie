@@ -538,6 +538,7 @@ vietnamese.RefreshBuild=Tải xuống Templates.ini mới nhất và các bản 
 vietnamese.Qt6Win10Unsupported=Khung Qt 6 không hỗ trợ các phiên bản Windows 10 1507, 1511 hoặc 1607.%nVui lòng cập nhật lên Windows 10 1809 (bản dựng 17763) hoặc mới hơn.%nXem vấn đề #5079 để biết chi tiết:%nhttps://github.com/sandboxie-plus/Sandboxie/issues/5079%nBạn vẫn muốn tiếp tục cài đặt không?
 
 ; Indonesian
+#if FileExists(AddBackslash(CompilerPath) + "Languages\\Indonesian.isl")
 indonesian.AddSandboxedMenu=Tambahkan "Jalankan di Sandbox" ke menu konteks
 indonesian.AddSandboxedBrowser=Tambahkan pintasan desktop untuk memulai browser Web di bawah Sandboxie
 indonesian.SandboxieStartMenu1=Jalankan program apa pun di dalam sandbox
@@ -561,3 +562,4 @@ indonesian.UninstallTaskLabel5=Hapus file konfigurasi dan &sandbox%nPilih opsi i
 indonesian.RefreshBuild=Unduh Templates.ini dan terjemahan terbaru
 indonesian.InstallImDisk=Instal (atau Perbarui) driver ImDisk 3.0 (untuk RamDisk dan Sandbox Terenkripsi)
 indonesian.Qt6Win10Unsupported=Framework Qt 6 tidak mendukung Windows 10 versi 1507, 1511, atau 1607.%nSilakan perbarui ke Windows 10 1809 (build 17763) atau yang lebih baru.%nLihat isu #5079 untuk detail selengkapnya:%nhttps://github.com/sandboxie-plus/Sandboxie/issues/5079%nApakah Anda tetap ingin melanjutkan instalasi?
+#endif
