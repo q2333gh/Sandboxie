@@ -100,6 +100,17 @@ jobs:
           echo qt6_version=%qt6_version% >> %GITHUB_ENV%
           echo qt_version=%qt6_version% >> %GITHUB_ENV%
 
+      - name: Resolve Sandboxie-Plus version
+        shell: pwsh
+        run: |
+          $header = Get-Content "${{ github.workspace }}\SandboxiePlus\version.h"
+          $mjr = ($header | Select-String '#define VERSION_MJR\s+(\d+)').Matches[0].Groups[1].Value
+          $min = ($header | Select-String '#define VERSION_MIN\s+(\d+)').Matches[0].Groups[1].Value
+          $rev = ($header | Select-String '#define VERSION_REV\s+(\d+)').Matches[0].Groups[1].Value
+          $upd = ($header | Select-String '#define VERSION_UPD\s+(\d+)').Matches[0].Groups[1].Value
+          $version = if ($upd -ne '0') { "$mjr.$min.$rev.$upd" } else { "$mjr.$min.$rev" }
+          "sbie_plus_version=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
       - name: Setup msbuild
         uses: microsoft/setup-msbuild@v2
 
@@ -175,6 +186,28 @@ jobs:
       - name: Merging Build
         run: Installer\copy_build.cmd x64 build_qt6
 
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Prepare x64 installer staging
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "${{ github.workspace }}\Installer\Release" | Out-Null
+          Remove-Item -Recurse -Force "${{ github.workspace }}\Installer\Release\SbiePlus_x64" -ErrorAction SilentlyContinue
+          Copy-Item "${{ github.workspace }}\Installer\SbiePlus_x64" "${{ github.workspace }}\Installer\Release\SbiePlus_x64" -Recurse
+
+      - name: Build Sandboxie x64 installer
+        shell: pwsh
+        run: |
+          $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'
+          & $iscc `
+            "/DMyAppVersion=${env:sbie_plus_version}" `
+            "/DMyAppArch=x64" `
+            "/DMyAppSrc=SbiePlus_x64" `
+            "/DMyNoSign=1" `
+            "/O${{ github.workspace }}\Installer\Output\x64" `
+            "${{ github.workspace }}\Installer\Sandboxie-Plus.iss"
+
       - name: Collect installer assets
         run: Installer\get_assets.cmd
 
@@ -196,6 +229,14 @@ jobs:
             Installer/SbiePlus_x64/*
           retention-days: 60
 
+      - name: Upload Sandboxie x64 installer
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: Sandboxie_x64_installer
+          path: |
+            Installer/Output/x64/*.exe
+          retention-days: 60
+
 
 
 
@@ -213,6 +254,17 @@ jobs:
           @echo on
           call "${{ github.workspace }}\Installer\buildVariables.cmd" build_qt6
           echo qt6_version=%qt6_version% >> %GITHUB_ENV%
+
+      - name: Resolve Sandboxie-Plus version
+        shell: pwsh
+        run: |
+          $header = Get-Content "${{ github.workspace }}\SandboxiePlus\version.h"
+          $mjr = ($header | Select-String '#define VERSION_MJR\s+(\d+)').Matches[0].Groups[1].Value
+          $min = ($header | Select-String '#define VERSION_MIN\s+(\d+)').Matches[0].Groups[1].Value
+          $rev = ($header | Select-String '#define VERSION_REV\s+(\d+)').Matches[0].Groups[1].Value
+          $upd = ($header | Select-String '#define VERSION_UPD\s+(\d+)').Matches[0].Groups[1].Value
+          $version = if ($upd -ne '0') { "$mjr.$min.$rev.$upd" } else { "$mjr.$min.$rev" }
+          "sbie_plus_version=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Setup msbuild
         uses: microsoft/setup-msbuild@v2
@@ -298,6 +350,28 @@ jobs:
       - name: Merging Build
         run: Installer\copy_build.cmd ARM64 build_qt6
 
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Prepare ARM64 installer staging
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "${{ github.workspace }}\Installer\Release" | Out-Null
+          Remove-Item -Recurse -Force "${{ github.workspace }}\Installer\Release\SbiePlus_a64" -ErrorAction SilentlyContinue
+          Copy-Item "${{ github.workspace }}\Installer\SbiePlus_a64" "${{ github.workspace }}\Installer\Release\SbiePlus_a64" -Recurse
+
+      - name: Build Sandboxie ARM64 installer
+        shell: pwsh
+        run: |
+          $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'
+          & $iscc `
+            "/DMyAppVersion=${env:sbie_plus_version}" `
+            "/DMyAppArch=arm64" `
+            "/DMyAppSrc=SbiePlus_a64" `
+            "/DMyNoSign=1" `
+            "/O${{ github.workspace }}\Installer\Output\arm64" `
+            "${{ github.workspace }}\Installer\Sandboxie-Plus.iss"
+
       - name: Upload Sandboxie ARM64
         #if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v7.0.0
@@ -305,4 +379,12 @@ jobs:
           name: Sandboxie_ARM64
           path: |
             Installer/SbiePlus_a64/*
+          retention-days: 60
+
+      - name: Upload Sandboxie ARM64 installer
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: Sandboxie_ARM64_installer
+          path: |
+            Installer/Output/arm64/*.exe
           retention-days: 60

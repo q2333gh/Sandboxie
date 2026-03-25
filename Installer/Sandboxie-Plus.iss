@@ -9,6 +9,7 @@
 ;#define MyAppArch "x64"
 ;#define MyAppSrc "SbiePlus64"
 #define CurrentYear GetDateTimeString('yyyy', '', '')
+#define HasImDiskPayload FileExists(AddBackslash(SourcePath) + "imdisk_files.cab") && FileExists(AddBackslash(SourcePath) + "imdisk_install.bat")
 
 
 [Setup]
@@ -34,7 +35,9 @@ UsedUserAreasWarning=no
 VersionInfoCopyright=Copyright (C) 2020-{#CurrentYear} by David Xanatos (xanasoft.com)
 VersionInfoVersion={#MyAppVersion}
 SetupIconFile=SandManInstall.ico
+#ifndef MyNoSign
 SignTool=sha256
+#endif
 ; Require windows 10 or later
 ;MinVersion=10.0
 
@@ -52,7 +55,7 @@ Name: "DesktopIcon"; Description: "{cm:CreateDesktopIcon}"; MinVersion: 0.0,5.0;
 ;Name: "AddRunSandboxed"; Description: "{cm:AddSandboxedMenu}"; MinVersion: 0.0,5.0; Check: not IsPortable
 Name: "RefreshBuild"; Description: "{cm:RefreshBuild}"; MinVersion: 0.0,5.0; Check: not IsPortable
 ; todo make ARM64 ImDisk Package
-#if MyAppArch == "x64"
+#if MyAppArch == "x64" && HasImDiskPayload
 Name: "InstallImDisk"; Description: "{cm:InstallImDisk}"; MinVersion: 0.0,5.0; Flags: unchecked; Check: IsWin64
 #endif
 
@@ -83,7 +86,7 @@ Source: ".\Sandboxie.ini"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntex
 Source: ".\Sandboxie-Plus.ini"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist; Check: IsPortable
 
 ; ImDiskTK
-#if MyAppArch == "x64"
+#if MyAppArch == "x64" && HasImDiskPayload
 Source: ".\imdisk_files.cab"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\imdisk_install.bat"; DestDir: "{app}"; Flags: ignoreversion
 #endif
@@ -164,7 +167,7 @@ Filename: "{app}\KmdUtil.exe"; Parameters: "install SbieSvc ""{app}\SbieSvc.exe"
 Filename: "{app}\UpdUtil.exe"; Parameters: {code:GetParams}; StatusMsg: "UpdUtill checking for updates..."; Check: IsRefresh
 
 ; Install ImDisk 3.0 driver
-#if MyAppArch == "x64"
+#if MyAppArch == "x64" && HasImDiskPayload
 Filename: "{app}\imdisk_install.bat"; StatusMsg: "Installing ImDisk 3.0 Driver..."; Check: IsInstallImDisk
 #endif
 
