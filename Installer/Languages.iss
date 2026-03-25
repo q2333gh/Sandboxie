@@ -38,7 +38,9 @@ Name: "vietnamese"; MessagesFile: "isl\Vietnamese.isl"
 Name: "norwegian"; MessagesFile: "compiler:Languages\Norwegian.isl"
 ;Name: "slovak"; MessagesFile: "compiler:Languages\Slovak.isl"
 ;Name: "slovenian"; MessagesFile: "compiler:Languages\Slovenian.isl"
+#if FileExists(AddBackslash(CompilerPath) + "Languages\\Indonesian.isl")
 Name: "indonesian"; MessagesFile: "compiler:Languages\Indonesian.isl"
+#endif
 
 
 [CustomMessages]
