@@ -780,6 +780,7 @@ _FX PROCESS *Process_Create(
     // check certificate
     //
 
+    #ifndef NOSUPPORT_PATCH
     if (!(Verify_CertInfo.active && Verify_CertInfo.opt_sec) && !proc->image_sbie) {
 
         const WCHAR* exclusive_setting = NULL;
@@ -810,7 +811,9 @@ _FX PROCESS *Process_Create(
             Process_ScheduleKill(proc, 5*60*1000); // 5 minutes
         }
     }
+    #endif
 
+    #ifndef NOSUPPORT_PATCH
     if (!(Verify_CertInfo.active && Verify_CertInfo.opt_enc) && !proc->image_sbie) {
         
         const WCHAR* exclusive_setting = NULL;
@@ -826,6 +829,7 @@ _FX PROCESS *Process_Create(
             return NULL;
         }
     }
+    #endif
 
     //
     // If we don't have valid Dyndata, we force NoSecurityIsolation=y on all boxes
