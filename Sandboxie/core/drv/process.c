@@ -813,7 +813,7 @@ _FX PROCESS *Process_Create(
     }
     #endif
 
-    #ifndef NOSUPPORT_PATCH
+    #ifndef NOSUPPORT_PATCH  
     if (!(Verify_CertInfo.active && Verify_CertInfo.opt_enc) && !proc->image_sbie) {
         
         const WCHAR* exclusive_setting = NULL;
